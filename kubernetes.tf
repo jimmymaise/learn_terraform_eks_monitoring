@@ -28,42 +28,44 @@ provider "kubernetes" {
 }
 
 resource "null_resource" "update_kubeconfig" {
-  depends_on = [module.eks]
+  depends_on = [
+    module.eks]
   provisioner "local-exec" {
     command = "/usr/local/bin/aws eks --region ${var.region} update-kubeconfig --name ${module.eks.cluster_id}"
   }
 }
-resource "null_resource" "install_scsi_driver" {
+resource "null_resource" "install_csi_driver" {
   provisioner "local-exec" {
     command = "/usr/local/bin/kubectl apply -k \"github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master\""
   }
-  depends_on = [null_resource.update_kubeconfig]
+  depends_on = [
+    null_resource.update_kubeconfig]
 }
 
-//resource "kubernetes_config_map" "aws_auth_configmap" {
-//  metadata {
-//    name = "aws-auth"
-//    namespace = "kube-system"
-//  }
-//
-//  data = {
-//
-//    mapUsers =  <<YAML
-//- userarn: "arn:aws:iam::604787518005:user/jimmymai"
-//  username: "jimmymai"
-//  groups:
-//    - system:masters
-//YAML
-//
-////    mapRoles = {
-////      rolearn = "arn:aws:iam::123456789:user/diego"
-////      username = "devops"
-////      groups = [
-////        "system:masters"]
-////    }
-//  }
-//
-//}
+resource "kubernetes_config_map" "aws_auth_configmap" {
+  metadata {
+    name = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+
+    mapUsers = <<YAML
+- userarn: "arn:aws:iam::604787518005:user/jimmymai"
+  username: "jimmymai"
+  groups:
+    - system:masters
+YAML
+
+    //    mapRoles = {
+    //      rolearn = "arn:aws:iam::123456789:user/diego"
+    //      username = "devops"
+    //      groups = [
+    //        "system:masters"]
+    //    }
+  }
+
+}
 
 
 locals {
@@ -78,26 +80,28 @@ locals {
 }
 
 resource "kubernetes_storage_class" "ebs" {
-  depends_on = [null_resource.install_scsi_driver]
+  depends_on = [
+    null_resource.install_csi_driver]
+  volume_binding_mode = "WaitForFirstConsumer"
   metadata {
-    name = "ebs-sc1"
+    name = "ebs-sc"
   }
-  storage_provisioner = "ebs.csi.aws.com"
+  storage_provisioner = "kubernetes.io/aws-ebs"
   parameters = {
     type = "gp2"
   }
   mount_options = [
     "debug"]
-  volume_binding_mode = "Immediate"
 }
 
 
-resource "kubernetes_persistent_volume_claim" "ebs_claim" {
-  depends_on = [null_resource.install_scsi_driver]
+resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_web" {
+  depends_on = [
+    null_resource.install_csi_driver]
   metadata {
-    name = "ebs-claim1"
+    name = "ebs-claim-for-wp-web"
   }
-
+  wait_until_bound = false
   spec {
     storage_class_name = kubernetes_storage_class.ebs.metadata[0].name
     access_modes = [
@@ -107,7 +111,25 @@ resource "kubernetes_persistent_volume_claim" "ebs_claim" {
         storage = "4Gi"
       }
     }
-    volume_name = kubernetes_storage_class.ebs.metadata[0].name
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_mysql" {
+  depends_on = [
+    null_resource.install_csi_driver]
+  metadata {
+    name = "ebs-claim-for-wp-mysql"
+  }
+  wait_until_bound = false
+  spec {
+    storage_class_name = kubernetes_storage_class.ebs.metadata[0].name
+    access_modes = [
+      "ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = "4Gi"
+      }
+    }
   }
 }
 
@@ -122,9 +144,9 @@ resource "kubernetes_secret" "mysql-pass" {
 }
 
 
-
-resource "kubernetes_deployment" "wordpress" {
-  depends_on = [null_resource.install_scsi_driver]
+resource "kubernetes_deployment" "wordpress_web" {
+  depends_on = [
+    kubernetes_persistent_volume_claim.ebs_claim_for_wp_web]
   metadata {
     name = "wordpress"
   }
@@ -158,14 +180,14 @@ resource "kubernetes_deployment" "wordpress" {
             }
           }
           volume_mount {
-            mount_path = "/data"
+            mount_path = "/var/www/html"
             name = "persistent-storage"
           }
         }
         volume {
-          name="persistent-storage"
+          name = "persistent-storage"
           persistent_volume_claim {
-            claim_name=kubernetes_persistent_volume_claim.ebs_claim.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.ebs_claim_for_wp_web.metadata[0].name
           }
         }
       }
@@ -173,8 +195,7 @@ resource "kubernetes_deployment" "wordpress" {
   }
 }
 
-resource "kubernetes_service" "wordpress-service" {
-  depends_on = [null_resource.install_scsi_driver]
+resource "kubernetes_service" "wordpress_web-service" {
   metadata {
     name = "wordpress-service"
   }
@@ -189,7 +210,10 @@ resource "kubernetes_service" "wordpress-service" {
   }
 }
 
-resource "kubernetes_deployment" "mysql" {
+resource "kubernetes_deployment" "wp_mysql" {
+  depends_on = [
+    kubernetes_persistent_volume_claim.ebs_claim_for_wp_mysql]
+
   metadata {
     name = "mysql"
   }
@@ -219,30 +243,30 @@ resource "kubernetes_deployment" "mysql" {
             }
           }
           volume_mount {
-            mount_path = "/data"
+            mount_path = "/var/lib/mysql"
             name = "persistent-storage"
           }
         }
         volume {
-          name="persistent-storage"
+          name = "persistent-storage"
           persistent_volume_claim {
-            claim_name=kubernetes_persistent_volume_claim.ebs_claim.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.ebs_claim_for_wp_mysql.metadata[0].name
           }
         }
       }
     }
   }
 }
-  resource "kubernetes_service" "mysql-service" {
-    metadata {
-      name = "mysql-service"
-    }
-    spec {
-      selector = local.mysql_labels
-      port {
-        port = 3306
-        target_port = 3306
-      }
-      type = "NodePort"
-    }
+resource "kubernetes_service" "wp_mysql-service" {
+  metadata {
+    name = "mysql-service"
   }
+  spec {
+    selector = local.mysql_labels
+    port {
+      port = 3306
+      target_port = 3306
+    }
+    type = "NodePort"
+  }
+}
