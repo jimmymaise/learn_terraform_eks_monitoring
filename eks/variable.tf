@@ -7,8 +7,6 @@ variable "region" {
 }
 
 variable cluster_name {
-  default = "testapp-eks-cluster"
-  type    = string
 }
 
 variable "eks-version" {

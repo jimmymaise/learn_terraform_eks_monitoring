@@ -3,11 +3,11 @@ locals {
 }
 
 module "vpc" {
-  source = "./vpc"
-
-  name        = var.name
-  environment = var.environment
-  cidr        = var.cidr
+  source           = "./vpc"
+  eks_cluster_name = var.cluster_name
+  name             = var.name
+  environment      = var.environment
+  cidr             = var.cidr
 
   public_subnets     = var.public_subnets
   private_subnets    = var.private_subnets
@@ -24,6 +24,7 @@ module "security_groups" {
 
 
 module "eks" {
+
   source             = "./eks"
   vpc_id             = module.vpc.id
   cidr               = var.cidr
@@ -31,6 +32,7 @@ module "eks" {
   private_subnets    = module.vpc.private_subnets
   availability_zones = var.availability_zones
   eks_cluster_sg_id  = module.security_groups.eks_cluster_sg_id
+  cluster_name       = var.cluster_name
 
 }
 

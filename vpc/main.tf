@@ -32,7 +32,7 @@ resource "aws_nat_gateway" "main" {
 
 resource "aws_eip" "nat" {
   count = length(var.private_subnets)
-  vpc = true
+  vpc   = true
 
   tags = {
     Name        = "${var.name}-eip-${var.environment}-${format("%03d", count.index+1)}"
@@ -47,9 +47,13 @@ resource "aws_subnet" "private" {
   count             = length(var.private_subnets)
 
   tags = {
-    Name        = "${var.name}-private-subnet-${var.environment}-${format("%03d", count.index+1)}"
-    Environment = var.environment
+    Name                                           = "${var.name}-private-subnet-${var.environment}-${format("%03d", count.index+1)}"
+    Environment                                    = var.environment
+    "kuernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"                       = "1"
+
   }
+
 }
 
 resource "aws_subnet" "public" {
@@ -60,8 +64,10 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.name}-public-subnet-${var.environment}-${format("%03d", count.index+1)}"
-    Environment = var.environment
+    Name                                           = "${var.name}-public-subnet-${var.environment}-${format("%03d", count.index+1)}"
+    Environment                                    = var.environment
+    "kuernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                       = "1"
   }
 }
 
@@ -71,6 +77,7 @@ resource "aws_route_table" "public" {
   tags = {
     Name        = "${var.name}-routing-table-public"
     Environment = var.environment
+
   }
 }
 

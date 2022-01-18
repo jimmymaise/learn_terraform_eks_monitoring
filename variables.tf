@@ -28,7 +28,10 @@ variable "aws-secret-key" {
 }
 
 
-
+variable cluster_name {
+  default = "testapp-eks-cluster"
+  description    = "EKS cluster name"
+}
 
 variable "availability_zones" {
   description = "a comma-separated list of availability zones, defaults to all AZ of the region, if set to something other than the defaults, both private_subnets and public_subnets have to be defined as well"
