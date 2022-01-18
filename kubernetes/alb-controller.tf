@@ -1,16 +1,20 @@
 data "aws_caller_identity" "current" {}
-
+//[AWS side] Download IAM policy for the AWS Load Balancer Controller
 data "http" "iam_policy" {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.0/docs/install/iam_policy.json"
+  url             = "https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/main/docs/install/iam_policy.json"
   request_headers = {
     Accept = "application/json"
   }
 }
 
-resource "aws_iam_policy" "AWSLoadBalancerControllerIAMPolicy" {
-  name = "AWSLoadBalancerControllerIAMPolicy"
+//[AWS side] Create an IAM policy called AWSLoadBalancerControllerIAMPolicy using downloaded policy document
+resource "aws_iam_policy" "aws_load_balancer_controller_iam_policy" {
+  name   = "AWSLoadBalancerControllerIAMPolicy"
   policy = data.http.iam_policy.body
 }
+
+
+//[AWS side] Make assume role policy document
 
 data "aws_iam_policy_document" "elb_assume_role_policy" {
   statement {
@@ -24,34 +28,38 @@ data "aws_iam_policy_document" "elb_assume_role_policy" {
     }
 
     principals {
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(var.eks_oidc_url, "https://", "")}"]
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(var.eks_oidc_url, "https://", "")}"
+      ]
       type        = "Federated"
     }
   }
 }
 
+//[AWS side] Create iam role AmazonEKSLoadBalancerControllerRole and with the created assumed role document
 resource "aws_iam_role" "eks_lb_controller" {
   assume_role_policy = data.aws_iam_policy_document.elb_assume_role_policy.json
   name               = "AmazonEKSLoadBalancerControllerRole"
 }
 
-resource "aws_iam_role_policy_attachment" "ALBIngressControllerIAMPolicy" {
-  policy_arn = aws_iam_policy.AWSLoadBalancerControllerIAMPolicy.arn
+
+//[AWS side] Add policy AWSLoadBalancerControllerIAMPolicy to this role iam role AmazonEKSLoadBalancerControllerRole
+resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_iam_policy" {
+  policy_arn = aws_iam_policy.aws_load_balancer_controller_iam_policy.arn
   role       = aws_iam_role.eks_lb_controller.name
 }
 
 
-//kubernetes side .Create a load balance service having aws iam created above. As it is associated with the created
-//IAM role having permission to assume role for managing ELB's resource, this account has same permission.
+//[Kube side] Create a load balance service having aws iam created above.
 resource "kubernetes_service_account" "load_balancer_Controller" {
   automount_service_account_token = true
   metadata {
-    name      = "aws-load-balancer-controller"
-    namespace = "kube-system"
+    name        = "aws-load-balancer-controller"
+    namespace   = "kube-system"
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.eks_lb_controller.arn
     }
-    labels = {
+    labels      = {
       "app.kubernetes.io/name"       = "aws-load-balancer-controller"
       "app.kubernetes.io/component"  = "controller"
       "app.kubernetes.io/managed-by" = "terraform"
@@ -59,7 +67,7 @@ resource "kubernetes_service_account" "load_balancer_Controller" {
   }
 }
 
-//create a kubernetes cluster role named load balancer controller. This role can have some permission to
+//[Kube side] Create a kubernetes cluster role named load balancer controller. This role can have some permission to
 //communicate with kubernetes api
 resource "kubernetes_cluster_role" "load_balancer_Controller" {
   metadata {
@@ -83,7 +91,7 @@ resource "kubernetes_cluster_role" "load_balancer_Controller" {
     verbs      = ["get", "list", "watch"]
   }
 }
-//add service account to the role
+//[Kube] Add service account to the role so that it has permisson in kube
 resource "kubernetes_cluster_role_binding" "load_balancer_Controller" {
   metadata {
     name = "aws-load-balancer-controller"
@@ -104,16 +112,17 @@ resource "kubernetes_cluster_role_binding" "load_balancer_Controller" {
     api_group = ""
     kind      = "ServiceAccount"
     name      = kubernetes_service_account.load_balancer_Controller.metadata[0].name
-    namespace = kubernetes_service_account.load_balancer_Controller.metadata[0].namespace
   }
-  depends_on = [ kubernetes_cluster_role.load_balancer_Controller ]
+  depends_on = [kubernetes_cluster_role.load_balancer_Controller]
 }
+
+
+//[Kube] Create alb_load_balancer_controller with the created service account
 
 resource "helm_release" "alb_load_balancer_controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  version    = "1.1.1"
   namespace  = "kube-system"
   atomic     = true
 
@@ -137,5 +146,6 @@ resource "helm_release" "alb_load_balancer_controller" {
     name  = "vpcId"
     value = var.vpc_id
   }
-  depends_on = [kubernetes_cluster_role_binding.load_balancer_Controller]
+    depends_on = [kubernetes_cluster_role_binding.load_balancer_Controller]
 }
+

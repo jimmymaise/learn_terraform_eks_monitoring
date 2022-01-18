@@ -81,7 +81,7 @@ resource "kubernetes_service" "wordpress_web-service" {
     port {
       port        = 80
       target_port = 80
-      node_port   = 32000
+      protocol = "TCP"
     }
     type     = "NodePort"
   }
@@ -99,10 +99,6 @@ resource "kubernetes_ingress" "wordpress" {
   }
 
   spec {
-    backend {
-      service_name = kubernetes_service.wordpress_web-service.metadata[0].name
-      service_port = kubernetes_service.wordpress_web-service.spec[0].port[0].port
-    }
     rule {
       http {
         path {

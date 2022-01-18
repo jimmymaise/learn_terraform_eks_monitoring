@@ -23,3 +23,8 @@ output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = local.cluster_name
 }
+
+output "cluster_vcp_id" {
+  description = "VPC id"
+  value       = module.vpc.id
+}
