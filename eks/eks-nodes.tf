@@ -97,4 +97,26 @@ resource "aws_eks_node_group" "eks-worknode-group-1" {
 }
 
 
+resource "aws_eks_node_group" "eks-worknode-group-2" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  node_group_name = "${var.cluster_name}-worknode-group-2"
+  node_role_arn = aws_iam_role.eks_worknode.arn
+  subnet_ids = var.public_subnets
+  //  remote_access {
+  //    ec2_ssh_key = var.ssh_key_name
+  //  }
+
+  scaling_config {
+    desired_size = 1
+    max_size = 1
+    min_size = 1
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.worknode-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.worknode-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.worknode-AmazonEC2ContainerRegistryReadOnly,
+  ]
+}
+
 

@@ -20,7 +20,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-    debug = "true"
+    debug = true
   kubernetes {
     host                   = data.aws_eks_cluster.cluster.endpoint
     token                  = data.aws_eks_cluster_auth.cluster.token

@@ -47,10 +47,12 @@ resource "aws_subnet" "private" {
   count             = length(var.private_subnets)
 
   tags = {
-    Name                                           = "${var.name}-private-subnet-${var.environment}-${format("%03d", count.index+1)}"
-    Environment                                    = var.environment
+    Name        = "${var.name}-private-subnet-${var.environment}-${format("%03d", count.index+1)}"
+    Environment = var.environment
+
+    //https://aws.amazon.com/premiumsupport/knowledge-center/eks-vpc-subnet-discovery/
     "kuernetes.io/cluster/${var.eks_cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"                       = "1"
+    "kubernetes.io/role/internal-elb"              = "1"
 
   }
 
