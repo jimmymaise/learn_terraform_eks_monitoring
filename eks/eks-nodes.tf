@@ -25,17 +25,17 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "worknode-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role = aws_iam_role.eks_worknode.name
+  role       = aws_iam_role.eks_worknode.name
 }
 
 resource "aws_iam_role_policy_attachment" "worknode-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role = aws_iam_role.eks_worknode.name
+  role       = aws_iam_role.eks_worknode.name
 }
 
 resource "aws_iam_role_policy_attachment" "worknode-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role = aws_iam_role.eks_worknode.name
+  role       = aws_iam_role.eks_worknode.name
 }
 
 
@@ -71,22 +71,27 @@ POLICY
 # And attach the new policy
 resource "aws_iam_role_policy_attachment" "worknode-AmazonEBSCSIDriver" {
   policy_arn = aws_iam_policy.eks_worknode_ebs_policy.arn
-  role = aws_iam_role.eks_worknode.name
+  role       = aws_iam_role.eks_worknode.name
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDlQk+ars+utu+TNbcXv7ZyTUF9FM5Lv58HvCCpR0oCZm3PTunMVzS04d7S9UBnC2e8UFCyWkqqn7dacve6+EGoZlwjevffZ/Mj0MM8NBQI2CPxKF6grn6zfhL/seQzCpn9Agoo3mN8E5Dz2upi0ii8oabs1xHJAJFC9DhbiSXpjdI925e1Vi/cDt0S8NLagmg1lxrlI/5xcfjfGn1qyqBgBUWOK4aCBR0CbNJkFa9pp8kclES9+8B/tiJfGF4y+w7rJApZFp3CofFtbpj74R5bH+raGHIzQ/ZqjrM0GbqVZfz2g2xjLfRiPkIUWpcJvdUKY051ywsjwb08toTNUsdP duyetmai@ip-172-24-0-206.us-west-2.compute.internal"
 }
 
 resource "aws_eks_node_group" "eks-worknode-group-1" {
-  cluster_name = aws_eks_cluster.eks_cluster.name
+  cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "${var.cluster_name}-worknode-group"
-  node_role_arn = aws_iam_role.eks_worknode.arn
-  subnet_ids = var.public_subnets
-  //  remote_access {
-  //    ec2_ssh_key = var.ssh_key_name
-  //  }
+  node_role_arn   = aws_iam_role.eks_worknode.arn
+  subnet_ids      = var.public_subnets
+  remote_access {
+    ec2_ssh_key = "deployer-key"
+  }
 
   scaling_config {
     desired_size = 1
-    max_size = 1
-    min_size = 1
+    max_size     = 2
+    min_size     = 1
   }
 
   depends_on = [
@@ -98,18 +103,19 @@ resource "aws_eks_node_group" "eks-worknode-group-1" {
 
 
 resource "aws_eks_node_group" "eks-worknode-group-2" {
-  cluster_name = aws_eks_cluster.eks_cluster.name
+  cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "${var.cluster_name}-worknode-group-2"
-  node_role_arn = aws_iam_role.eks_worknode.arn
-  subnet_ids = var.public_subnets
-  //  remote_access {
-  //    ec2_ssh_key = var.ssh_key_name
-  //  }
+  node_role_arn   = aws_iam_role.eks_worknode.arn
+  subnet_ids      = var.public_subnets
+  remote_access {
+    ec2_ssh_key = "deployer-key"
+  }
+
 
   scaling_config {
     desired_size = 1
-    max_size = 1
-    min_size = 1
+    max_size     = 2
+    min_size     = 1
   }
 
   depends_on = [

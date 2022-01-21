@@ -57,3 +57,5 @@ resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_mysql" {
     }
   }
 }
+
+

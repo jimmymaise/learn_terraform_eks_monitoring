@@ -91,6 +91,7 @@ resource "kubernetes_service" "wordpress_web-service" {
 resource "kubernetes_ingress" "wordpress" {
   metadata {
     name        = "kube-ingress-wordpress"
+#    namespace = "wordpress_app"
     annotations = {
       "kubernetes.io/ingress.class"           = "alb"
       "alb.ingress.kubernetes.io/scheme"      = "internet-facing"

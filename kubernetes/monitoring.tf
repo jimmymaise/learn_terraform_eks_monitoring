@@ -1,3 +1,15 @@
+#resource "kubernetes_config_map" "grafana_config_map" {
+#  metadata {
+#    name = "grafana-config-map"
+#  }
+#
+#  data = {
+#    "my_config_file.yml" = file("kubernetes/yaml/grafana/config.yaml")
+#  }
+#
+#}
+
+
 resource "helm_release" "prometheus" {
   name             = "prometheus"
   repository       = "https://prometheus-community.github.io/helm-charts"
@@ -7,25 +19,23 @@ resource "helm_release" "prometheus" {
 
   set {
     name  = "alertmanager.persistentVolume.storageClass"
-    value = "gp2"
+    value = kubernetes_storage_class.ebs.metadata[0].name
   }
   set {
     name  = "server.persistentVolume.storageClass"
-    value = "gp2"
+    value = kubernetes_storage_class.ebs.metadata[0].name
   }
-  depends_on = [kubernetes_cluster_role_binding.load_balancer_Controller]
 }
 
 resource "helm_release" "grafana" {
   name             = "grafana"
   repository       = "https://grafana.github.io/helm-charts"
   chart            = "grafana"
-  namespace        = "grafana"
+  namespace        = "grafana1"
   create_namespace = true
-
   set {
     name  = "persistence.storageClassName"
-    value = "gp2"
+    value = kubernetes_storage_class.ebs.metadata[0].name
   }
   set {
     name  = "persistence.enable"
@@ -36,11 +46,13 @@ resource "helm_release" "grafana" {
     value = "justForTest"
   }
 
-    set {
+  set {
     name  = "service.type"
     value = "LoadBalancer"
   }
   values     = [
-    file("kubernetes/yaml/grafana/grafana_helm_values.yaml")
+    file("kubernetes/yaml/grafana/values.yaml")
   ]
+#  depends_on = [helm_release.prometheus]
+
 }

@@ -21,30 +21,30 @@ resource "null_resource" "install_csi_driver" {
   ]
 }
 
-resource "kubernetes_config_map" "aws_auth_configmap" {
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
-
-  data = {
-
-    mapUsers = <<YAML
-- userarn: "arn:aws:iam::604787518005:user/jimmymai"
-  username: "jimmymai"
-  groups:
-    - system:masters
-YAML
-
-    //    mapRoles = {
-    //      rolearn = "arn:aws:iam::123456789:user/diego"
-    //      username = "devops"
-    //      groups = [
-    //        "system:masters"]
-    //    }
-  }
-
-}
+#resource "kubernetes_config_map" "aws_auth_configmap" {
+#  metadata {
+#    name      = "aws-auth"
+#    namespace = "kube-system"
+#  }
+#
+#  data = {
+#
+#    mapUsers = <<YAML
+#- userarn: "arn:aws:iam::604787518005:user/jimmymai"
+#  username: "jimmymai"
+#  groups:
+#    - system:masters
+#YAML
+#
+#    //    mapRoles = {
+#    //      rolearn = "arn:aws:iam::123456789:user/diego"
+#    //      username = "devops"
+#    //      groups = [
+#    //        "system:masters"]
+#    //    }
+#  }
+#
+#}
 
 
 
