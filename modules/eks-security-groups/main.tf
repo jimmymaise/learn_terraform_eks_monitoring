@@ -1,3 +1,6 @@
+//todo Remove all hard code. Should be configurable and reusable
+
+
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "eks-cluster-security-group"
   description = "Cluster communication with worker nodes"

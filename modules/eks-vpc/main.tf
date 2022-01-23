@@ -1,3 +1,5 @@
+//todo Remove all hard code. Should be configurable and reusable
+
 resource "aws_vpc" "main" {
   cidr_block           = var.cidr
   enable_dns_support   = true
