@@ -31,7 +31,7 @@ resource "helm_release" "grafana" {
   name             = "grafana"
   repository       = "https://grafana.github.io/helm-charts"
   chart            = "grafana"
-  namespace        = "grafana1"
+  namespace        = "grafana"
   create_namespace = true
   set {
     name  = "persistence.storageClassName"
@@ -51,7 +51,7 @@ resource "helm_release" "grafana" {
     value = "LoadBalancer"
   }
   values     = [
-    file("kubernetes/yaml/grafana/values.yaml")
+    file("../modules/kubernetes/yaml/grafana/values.yaml")
   ]
 #  depends_on = [helm_release.prometheus]
 

@@ -1,7 +1,7 @@
 resource "kubernetes_storage_class" "ebs" {
-  depends_on          = [
-    null_resource.install_csi_driver
-  ]
+#  depends_on          = [
+#    null_resource.install_csi_driver
+#  ]
   volume_binding_mode = "WaitForFirstConsumer"
   metadata {
     name = "ebs-sc"
@@ -17,9 +17,9 @@ resource "kubernetes_storage_class" "ebs" {
 
 
 resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_web" {
-  depends_on       = [
-    null_resource.install_csi_driver
-  ]
+#  depends_on       = [
+#    null_resource.install_csi_driver
+#  ]
   metadata {
     name = "ebs-claim-for-wp-web"
   }
@@ -38,9 +38,9 @@ resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_web" {
 }
 
 resource "kubernetes_persistent_volume_claim" "ebs_claim_for_wp_mysql" {
-  depends_on       = [
-    null_resource.install_csi_driver
-  ]
+#  depends_on       = [
+#    null_resource.install_csi_driver
+#  ]
   metadata {
     name = "ebs-claim-for-wp-mysql"
   }

@@ -18,15 +18,6 @@ variable "aws-region" {
   default     = "us-west-2"
 }
 
-variable "aws-access-key" {
-  type = string
-
-}
-
-variable "aws-secret-key" {
-  type = string
-}
-
 
 variable cluster_name {
   default = "testapp-eks-cluster"

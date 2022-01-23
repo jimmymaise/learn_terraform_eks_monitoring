@@ -12,14 +12,14 @@ resource "null_resource" "update_kubeconfig" {
     command = "/usr/local/bin/aws eks --region ${var.region} update-kubeconfig --name ${var.eks_cluster_id}"
   }
 }
-resource "null_resource" "install_csi_driver" {
-  provisioner "local-exec" {
-    command = "/usr/local/bin/kubectl apply -k \"github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master\""
-  }
-  depends_on = [
-    null_resource.update_kubeconfig
-  ]
-}
+#resource "null_resource" "install_csi_driver" {
+#  provisioner "local-exec" {
+#    command = "/usr/local/bin/kubectl apply -k \"github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master\""
+#  }
+#  depends_on = [
+#    null_resource.update_kubeconfig
+#  ]
+#}
 
 #resource "kubernetes_config_map" "aws_auth_configmap" {
 #  metadata {

@@ -2,8 +2,10 @@ locals {
   cluster_name = "testapp-eks-cluster"
 }
 
+
+
 module "vpc" {
-  source           = "./vpc"
+  source           = "../modules/eks-vpc"
   eks_cluster_name = var.cluster_name
   name             = var.name
   environment      = var.environment
@@ -16,7 +18,7 @@ module "vpc" {
 }
 
 module "security_groups" {
-  source      = "./security-groups"
+  source      = "../modules/eks-security-groups"
   name        = var.name
   environment = var.environment
   vpc_id      = module.vpc.id
@@ -25,7 +27,7 @@ module "security_groups" {
 
 module "eks" {
 
-  source             = "./eks"
+  source             = "../modules/eks"
   vpc_id             = module.vpc.id
   cidr               = var.cidr
   public_subnets     = module.vpc.public_subnets
@@ -37,7 +39,7 @@ module "eks" {
 }
 
 module "kubernetes" {
-  source               = "./kubernetes"
+  source               = "../modules/kubernetes"
   vpc_id               = module.vpc.id
   eks_cluster_id       = module.eks.cluster_id
   eks_cluster_name     = module.eks.cluster_name
