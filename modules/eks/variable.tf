@@ -36,3 +36,7 @@ variable "availability_zones" {
 variable "eks_cluster_sg_id" {
   description = "eks_cluster_sg_id"
 }
+
+variable "worker_groups" {
+  description = "worker_groups"
+}

@@ -3,7 +3,6 @@ locals {
 }
 
 
-
 module "vpc" {
   source           = "../modules/eks-vpc"
   eks_cluster_name = var.cluster_name
@@ -35,6 +34,27 @@ module "eks" {
   availability_zones = var.availability_zones
   eks_cluster_sg_id  = module.security_groups.eks_cluster_sg_id
   cluster_name       = var.cluster_name
+  worker_groups      = {
+    node1 : {
+      subnet_ids       = module.vpc.public_subnets,
+      instance_types   = ["t2.medium"]
+      ec2_ssh_key      = "deployer-key"
+      asg_desired_size = 1
+      asg_max_size     = 2
+      asg_min_size     = 1
+
+    }
+    node2 : {
+      subnet_ids       = module.vpc.public_subnets,
+      instance_types   = ["t2.medium"]
+      ec2_ssh_key      = "deployer-key"
+      asg_desired_size = 1
+      asg_max_size     = 2
+      asg_min_size     = 1
+
+    }
+
+  }
 
 }
 
