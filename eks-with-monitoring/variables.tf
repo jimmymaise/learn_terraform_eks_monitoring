@@ -20,8 +20,8 @@ variable "aws-region" {
 
 
 variable cluster_name {
-  default = "testapp-eks-cluster"
-  description    = "EKS cluster name"
+  default     = "testapp-eks-cluster"
+  description = "EKS cluster name"
 }
 
 variable "availability_zones" {
@@ -47,6 +47,6 @@ variable "public_subnets" {
 
 variable "tsl_certificate_arn" {
   description = "The ARN of the certificate that the ALB uses for https"
-  default = "arn:aws:acm:us-west-2:604787518005:certificate/73717297-b383-429b-b177-6db06ef8ace3"
+  default     = "arn:aws:acm:us-west-2:604787518005:certificate/73717297-b383-429b-b177-6db06ef8ace3"
 }
 
