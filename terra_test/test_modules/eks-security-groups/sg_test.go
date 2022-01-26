@@ -22,8 +22,6 @@ func TestEksClusterSG(t *testing.T) {
 
 	}
 	opts := &terraform.Options{
-		// You should update this relative path to point at your alb
-		// example directory!
 		TerraformDir: "../../../modules/eks-security-groups",
 		Vars: map[string]interface{}{
 			"name":        "test123",
