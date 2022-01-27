@@ -6,17 +6,17 @@ module "jenkins" {
   key-pair             = aws_key_pair.jenkins-key.key_name
   name                 = "jenkins"
   device-index         = 0
-  network-interface-id = aws_network_interface.jenkins.id
+  network_interface_id = aws_network_interface.jenkins.id
   public-dns           = aws_eip.jenkins.public_dns
-  admin-username       = var.admin-username
-  admin-password       = var.admin-password
-  admin-fullname       = var.admin-fullname
-  admin-email          = var.admin-email
-  bucket-config-name   = aws_s3_bucket.jenkins-config.id
-  remote-repo          = var.remote-repo
-  job-name             = var.job-name
-  job-id               = random_id.job-id.id
+  admin_username       = var.admin_username
+  admin_password       = var.admin_password
+  admin_fullname       = var.admin_fullname
+  admin_email          = var.admin_email
+  bucket_config_name   = aws_s3_bucket.jenkins_config.id
+  remote_repo          = var.remote_repo
+  job_name             = var.job_name
+  job_id               = random_id.job_id.id
 
   bucket-logs-name     = "test-abc"
-  s3-jenkins-config-id = aws_s3_bucket.jenkins-config.id
+  s3-jenkins_config-id = aws_s3_bucket.jenkins_config.id
 }

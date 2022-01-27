@@ -12,7 +12,7 @@ variable "region" {
   default     = "us-west-2"
 }
 
-variable "aws-region" {
+variable "aws_region" {
   type        = string
   description = "AWS region to launch servers."
   default     = "us-west-2"

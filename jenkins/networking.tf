@@ -1,6 +1,6 @@
 # 1. Create a VPC
 
-resource "aws_vpc" "jenkins-server" {
+resource "aws_vpc" "jenkins_server" {
   cidr_block           = "10.0.0.0/16" // completely private 10.0 are fixed
   enable_dns_hostnames = true
 
@@ -11,18 +11,18 @@ resource "aws_vpc" "jenkins-server" {
 
 # 2. Create a Gateway
 
-resource "aws_internet_gateway" "jenkins-server" {
-  vpc_id = aws_vpc.jenkins-server.id
+resource "aws_internet_gateway" "jenkins_server" {
+  vpc_id = aws_vpc.jenkins_server.id
 }
 
 # 3. Create a Route Table
 
-resource "aws_route_table" "allow-outgoing-access" {
-  vpc_id = aws_vpc.jenkins-server.id
+resource "aws_route_table" "allow_outgoing_access" {
+  vpc_id = aws_vpc.jenkins_server.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.jenkins-server.id
+    gateway_id = aws_internet_gateway.jenkins_server.id
   }
 
   tags = {
@@ -32,10 +32,10 @@ resource "aws_route_table" "allow-outgoing-access" {
 
 # 4.1 Create Subnet - Jenkins
 
-resource "aws_subnet" "subnet-public-jenkins" {
+resource "aws_subnet" "subnet_public_jenkins" {
   cidr_block        = "10.0.1.0/24"
-  vpc_id            = aws_vpc.jenkins-server.id
-  availability_zone = "${var.aws-region}a"
+  vpc_id            = aws_vpc.jenkins_server.id
+  availability_zone = "${var.aws_region}a"
 
   tags = {
     Name = "Jenkins Subnet"
@@ -46,8 +46,8 @@ resource "aws_subnet" "subnet-public-jenkins" {
 # 5.1 Create a Route Table Association --> associate Jenkins subnet to route table
 
 resource "aws_route_table_association" "jenkins-subnet" {
-  subnet_id      = aws_subnet.subnet-public-jenkins.id
-  route_table_id = aws_route_table.allow-outgoing-access.id
+  subnet_id      = aws_subnet.subnet_public_jenkins.id
+  route_table_id = aws_route_table.allow_outgoing_access.id
 }
 
 
@@ -56,7 +56,7 @@ resource "aws_route_table_association" "jenkins-subnet" {
 resource "aws_security_group" "allow-web-traffic" {
   name        = "allow-web-traffic"
   description = "Allow HTTP / HTTPS inbound traffic"
-  vpc_id      = aws_vpc.jenkins-server.id
+  vpc_id      = aws_vpc.jenkins_server.id
 
   ingress {
     description = "HTTP"
@@ -77,10 +77,10 @@ resource "aws_security_group" "allow-web-traffic" {
 
 # 6.2 Create a Security Group for inbound ssh
 
-resource "aws_security_group" "allow-ssh-traffic" {
-  name        = "allow-ssh-traffic"
+resource "aws_security_group" "allow_ssh_traffic" {
+  name        = "allow_ssh_traffic"
   description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.jenkins-server.id
+  vpc_id      = aws_vpc.jenkins_server.id
 
   ingress {
     description = "SSH"
@@ -93,10 +93,10 @@ resource "aws_security_group" "allow-ssh-traffic" {
 
 # 6.3 Create a Security Group for inbound traffic to Jenkins
 
-resource "aws_security_group" "allow-jenkins-traffic" {
-  name        = "allow-jenkins-traffic"
+resource "aws_security_group" "allow_jenkins_traffic" {
+  name        = "allow_jenkins_traffic"
   description = "Allow jenkins inbound traffic"
-  vpc_id      = aws_vpc.jenkins-server.id
+  vpc_id      = aws_vpc.jenkins_server.id
 
   ingress {
     description = "Jenkins"
@@ -110,10 +110,10 @@ resource "aws_security_group" "allow-jenkins-traffic" {
 
 # 6.5 Create a Security Group for outbound traffic
 
-resource "aws_security_group" "allow-all-outbound" {
-  name        = "allow-all-outbound"
+resource "aws_security_group" "allow_all_outbound" {
+  name        = "allow_all_outbound"
   description = "Allow all outbound traffic"
-  vpc_id      = aws_vpc.jenkins-server.id
+  vpc_id      = aws_vpc.jenkins_server.id
 
   egress {
     from_port   = 0
@@ -126,12 +126,12 @@ resource "aws_security_group" "allow-all-outbound" {
 # 7.1 Create a Network Interface for jenkins
 
 resource "aws_network_interface" "jenkins" {
-  subnet_id       = aws_subnet.subnet-public-jenkins.id
+  subnet_id       = aws_subnet.subnet_public_jenkins.id
   private_ips     = ["10.0.1.50"]
   security_groups = [
-    aws_security_group.allow-all-outbound.id,
-    aws_security_group.allow-ssh-traffic.id,
-    aws_security_group.allow-jenkins-traffic.id
+    aws_security_group.allow_all_outbound.id,
+    aws_security_group.allow_ssh_traffic.id,
+    aws_security_group.allow_jenkins_traffic.id
   ]
 }
 
@@ -144,7 +144,7 @@ resource "aws_eip" "jenkins" {
   network_interface         = aws_network_interface.jenkins.id
   associate_with_private_ip = "10.0.1.50"
   depends_on                = [
-    aws_internet_gateway.jenkins-server
+    aws_internet_gateway.jenkins_server
   ]
 }
 

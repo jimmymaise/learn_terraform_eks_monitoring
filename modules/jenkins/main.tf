@@ -1,5 +1,5 @@
-resource "aws_s3_bucket_object" "jenkins-config" {
-  bucket   = var.s3-jenkins-config-id
+resource "aws_s3_bucket_object" "jenkins_config" {
+  bucket   = var.s3-jenkins_config-id
   for_each = fileset("${path.module}/data/config_scripts/", "*")
   key      = each.value
   source   = "${path.module}/data/config_scripts/${each.value}"
@@ -13,7 +13,7 @@ resource "aws_instance" "default" {
   key_name             = var.key-pair
   network_interface {
     device_index         = var.device-index
-    network_interface_id = var.network-interface-id
+    network_interface_id = var.network_interface_id
   }
 
   user_data = templatefile(
@@ -21,14 +21,14 @@ resource "aws_instance" "default" {
   {
     bucket_logs_name   = var.bucket-logs-name,
     public_dns         = var.public-dns,
-    admin_username     = var.admin-username,
-    admin_password     = var.admin-password,
-    admin_fullname     = var.admin-fullname,
-    admin_email        = var.admin-email,
-    remote_repo        = var.remote-repo,
-    job_name           = var.job-name,
-    job_id             = var.job-id,
-    bucket_config_name = var.bucket-config-name
+    admin_username     = var.admin_username,
+    admin_password     = var.admin_password,
+    admin_fullname     = var.admin_fullname,
+    admin_email        = var.admin_email,
+    remote_repo        = var.remote_repo,
+    job_name           = var.job_name,
+    job_id             = var.job_id,
+    bucket_config_name = var.bucket_config_name
   }
   )
 

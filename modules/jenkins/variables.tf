@@ -20,7 +20,7 @@ variable "key-pair" {
   type = string
 }
 
-variable "network-interface-id" {
+variable "network_interface_id" {
   type = string
 }
 
@@ -29,26 +29,26 @@ variable "device-index" {
 }
 # S3 Bucket storing jenkins user data
 
-variable "s3-jenkins-config-id" {
+variable "s3-jenkins_config-id" {
   type = string
 }
 variable "public-dns" {
   type = string
 }
 
-variable "admin-username" {
+variable "admin_username" {
   type = string
 }
 
-variable "admin-password" {
+variable "admin_password" {
   type = string
 }
 
-variable "admin-email" {
+variable "admin_email" {
   type = string
 }
 
-variable "admin-fullname" {
+variable "admin_fullname" {
   type = string
 }
 
@@ -56,18 +56,18 @@ variable "bucket-logs-name" {
   type = string
 }
 
-variable "bucket-config-name" {
+variable "bucket_config_name" {
   type = string
 }
 
-variable "remote-repo" {
+variable "remote_repo" {
   type = string
 }
 
-variable "job-name" {
+variable "job_name" {
   type = string
 }
 
-variable "job-id" {
+variable "job_id" {
   type = string
 }

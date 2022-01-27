@@ -1,7 +1,7 @@
 name                = "demo"
 environment         = "dev"
 region              = "us-west-2"
-aws-region          = "us-west-2"
+aws_region          = "us-west-2"
 cluster_name        = "testapp-eks-cluster"
 availability_zones  = ["us-west-2a", "us-west-2b", "us-west-2c"]
 cidr                = "10.0.0.0/16"
