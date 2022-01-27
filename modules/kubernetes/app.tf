@@ -113,7 +113,6 @@ resource "kubernetes_ingress" "wordpress" {
     }
   }
   wait_for_load_balancer = true
-  depends_on             = [kubernetes_service.wordpress_web-service, helm_release.alb_load_balancer_controller]
 }
 
 
