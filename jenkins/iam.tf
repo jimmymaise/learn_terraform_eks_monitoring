@@ -1,4 +1,4 @@
-resource "aws_iam_policy" "s3-access" {
+resource "aws_iam_policy" "s3_access" {
   name = "s3-access"
 
   policy = <<EOF
@@ -15,6 +15,27 @@ resource "aws_iam_policy" "s3-access" {
 EOF
 }
 
+resource "aws_iam_policy" "aws_secret_management" {
+  policy = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowJenkinsToGetSecretValues",
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowJenkinsToListSecrets",
+            "Effect": "Allow",
+            "Action": "secretsmanager:ListSecrets"
+        }
+    ]
+}
+EOF
+
+}
 
 # Jenkins
 
@@ -40,6 +61,9 @@ resource "aws_iam_role" "jenkins" {
     ]
   })
 
-  managed_policy_arns = [aws_iam_policy.s3-access.arn]
+  managed_policy_arns = [
+    aws_iam_policy.s3_access.arn,
+    aws_iam_policy.aws_secret_management.arn
+  ]
 
 }

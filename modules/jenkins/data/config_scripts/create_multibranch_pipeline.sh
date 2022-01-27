@@ -1,7 +1,7 @@
 #! /bin/bash
 
-jobName_URLEncoded=$(python -c "import urllib;print urllib.quote(raw_input(), safe='')" <<< "$jobName")
-remote_URLEncoded=$(python -c "import urllib;print urllib.quote(raw_input(), safe='')" <<< "$remote")
+jobName_URLEncoded=$(python -c "import urllib;print urllib.quote(raw_input(), safe='')" <<<"$jobName")
+remote_URLEncoded=$(python -c "import urllib;print urllib.quote(raw_input(), safe='')" <<<"$remote")
 
 cookie_jar="$(mktemp)"
 full_crumb=$(curl -u "$user:$password" --cookie-jar "$cookie_jar" $url/crumbIssuer/api/xml?xpath=concat\(//crumbRequestField,%22:%22,//crumb\))
@@ -11,11 +11,11 @@ only_crumb=$(echo ${arr_crumb[1]})
 # Create Job
 
 curl -u "$user:$password" -X POST "$url/createItem" \
-     -H "$full_crumb" \
-     --cookie $cookie_jar \
-     --data-urlencode "name=$jobName" \
-     --data-urlencode "mode=org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" \
-     --data-urlencode "Jenkins-Crumb=$only_crumb"
+  -H "$full_crumb" \
+  --cookie $cookie_jar \
+  --data-urlencode "name=$jobName" \
+  --data-urlencode "mode=org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" \
+  --data-urlencode "Jenkins-Crumb=$only_crumb"
 
 # Config
 

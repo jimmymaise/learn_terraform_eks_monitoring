@@ -8,7 +8,7 @@ sudo yum install -y git
 
 # Install Jenkins
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
-    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 sudo yum upgrade -y
 sudo yum install -y jenkins java-1.8.0-openjdk-devel
@@ -59,6 +59,13 @@ sudo sleep 60
 #####################################################
 #######            SET UP JENKINS             #######
 #####################################################
+
+#---------------------------------------------#
+#------> SETUP TERRAFORM <--------#
+#---------------------------------------------#
+wget https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_linux_amd64.zip
+unzip terraform_1.1.4_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
 
 #---------------------------------------------#
 #------> DEFINE THE GLOBAL VARIABLES <--------#
