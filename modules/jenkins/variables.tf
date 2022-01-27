@@ -1,8 +1,8 @@
-variable "ami-id" {
+variable "ami_id " {
   type = string
 }
 
-variable "iam-instance-profile" {
+variable "iam_instance_profile" {
   default = ""
   type    = string
 }
@@ -16,7 +16,7 @@ variable "name" {
   type = string
 }
 
-variable "key-pair" {
+variable "key_pair" {
   type = string
 }
 
@@ -24,15 +24,15 @@ variable "network_interface_id" {
   type = string
 }
 
-variable "device-index" {
+variable "device_index" {
   type = number
 }
 # S3 Bucket storing jenkins user data
 
-variable "s3-jenkins_config-id" {
+variable "s3_jenkins_config_id" {
   type = string
 }
-variable "public-dns" {
+variable "public_dns" {
   type = string
 }
 
@@ -52,7 +52,7 @@ variable "admin_fullname" {
   type = string
 }
 
-variable "bucket-logs-name" {
+variable "bucket_logs_name" {
   type = string
 }
 
