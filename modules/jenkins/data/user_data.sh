@@ -81,26 +81,33 @@ export jobName="${job_name}"
 export jobID="${job_id}"
 
 #---------------------------------------------#
+#------> DEFINE THE GLOBAL VARIABLES <--------#
+#---------------------------------------------#
+sudo mkdir -p /var/jenkins_home/casc_configs
+echo 'export CASC_JENKINS_CONFIG="/var/jenkins_home/casc_configs"' >>~/.bash_profile
+source ~/.bash_profile
+echo "The CASC_JENKINS_CONFIG value is: " $CASC_JENKINS_CONFIG
+
+#---------------------------------------------#
 #-----> COPY THE CONFIG FILES FROM S3 <-------#
 #---------------------------------------------#
 
 sudo aws s3 cp s3://${bucket_config_name}/ ./ --recursive
 sudo chmod +x *.sh
+sudo mv *.yaml /var/jenkins_home/casc_configs
 
 #---------------------------------------------#
-#----------> RUN THE CONFIG FILES  <----------#
+#----------> RUN SH CONFIG FILES  <----------#
 #---------------------------------------------#
 
 ./create_admin_user.sh
 ./download_install_plugins.sh
 sudo sleep 120
 ./confirm_url.sh
-#./create_credentials.sh
-
-# Output the credentials id in a credentials_id file
-#python -c "import sys;import json;print(json.loads(raw_input())['credentials'][0]['id'])" <<< $(./get_credentials_id.sh) > credentials_id
-
 ./create_multibranch_pipeline.sh
+
+
+echo export CASC_JENKINS_CONFIG="/var/jenkins_home/casc_configs" | sudo tee -a /etc/profile
 
 #---------------------------------------------#
 #---------> DELETE THE CONFIG FILES <---------#

@@ -16,8 +16,9 @@ EOF
 }
 
 resource "aws_iam_policy" "aws_secret_management" {
+  name   = "secret-management-access"
   policy = <<EOF
-  {
+{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -29,12 +30,12 @@ resource "aws_iam_policy" "aws_secret_management" {
         {
             "Sid": "AllowJenkinsToListSecrets",
             "Effect": "Allow",
-            "Action": "secretsmanager:ListSecrets"
+            "Action": "secretsmanager:ListSecrets",
+            "Resource": "*"
         }
     ]
 }
 EOF
-
 }
 
 # Jenkins

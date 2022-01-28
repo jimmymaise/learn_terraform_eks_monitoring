@@ -14,7 +14,7 @@ pipeline {
     stage('Terraform Init') {
       steps {
         echo "here"
-        echo "${TEST_DUYET}"
+        echo "${env.TEST_DUYET}"
         echo "here"
         sh "cd eks-with-monitoring"
         sh "${env.TERRAFORM_HOME}/terraform init -input=false"
