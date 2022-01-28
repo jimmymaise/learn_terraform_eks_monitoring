@@ -31,17 +31,7 @@ pipeline {
 //     }
     stage('Terraform Apply') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -backend-config=envs/${env.ENV}/backend.conf -input=false"
-      }
-    }
-    stage('AWSpec Tests') {
-      steps {
-          sh '''#!/bin/bash -l
-bundle install --path ~/.gem
-bundle exec rake spec || true
-'''
-
-        junit(allowEmptyResults: true, testResults: '**/testResults/*.xml')
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -var-file=envs/${ENV}/terraform.tfvars -input=false"
       }
     }
   }
