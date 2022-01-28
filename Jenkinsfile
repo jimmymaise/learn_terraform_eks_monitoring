@@ -19,18 +19,18 @@ pipeline {
         echo env.AWS_SECRET_KEY
         sh "cd eks-with-monitoring"
         sh "ls -lha"
-        sh "${env.TERRAFORM_HOME}/terraform init -input=false"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" init -input=false"
       }
     }
     stage('Terraform Plan') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform plan -out=tfplan -input=false -var-file='dev.tfvars'"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" plan -out=tfplan -input=false -var-file='dev.tfvars'"
       }
     }
     stage('Terraform Apply') {
       steps {
         input 'Apply Plan'
-        sh "${env.TERRAFORM_HOME}/terraform apply -input=false tfplan"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -input=false tfplan"
       }
     }
     stage('AWSpec Tests') {
