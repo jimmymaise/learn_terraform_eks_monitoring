@@ -15,6 +15,10 @@ resource "aws_instance" "default" {
     device_index         = var.device_index
     network_interface_id = var.network_interface_id
   }
+  ebs_block_device {
+    device_name = "/dev/sda1"
+    volume_size = 50
+  }
 
   user_data = templatefile(
   "${path.module}/data/user_data.sh",

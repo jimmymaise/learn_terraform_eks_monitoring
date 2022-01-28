@@ -68,9 +68,12 @@ unzip terraform_1.1.4_linux_amd64.zip
 sudo mv terraform /usr/local/bin/
 
 #---------------------------------------------#
-#------> SETUP GOLANG <--------#
+#------> SETUP GOLANG, AWC CLI <--------#
 #---------------------------------------------#
 sudo yum install golang -y
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
 #---------------------------------------------#
 #------> DEFINE THE GLOBAL VARIABLES <--------#
@@ -110,7 +113,6 @@ sudo sleep 10
 sudo sleep 120
 ./confirm_url.sh
 ./create_multibranch_pipeline.sh
-
 
 echo export CASC_JENKINS_CONFIG="/var/jenkins_home/casc_configs" | sudo tee -a /etc/profile
 
