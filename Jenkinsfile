@@ -1,16 +1,21 @@
 pipeline {
-  parameters {
-    password (name: 'AWS_ACCESS_KEY_ID')
-    password (name: 'AWS_SECRET_ACCESS_KEY')
-  }
+  agent any
+    environment {
+          TEST_DUYET = credentials('testduyet')
+      }
+//   parameters {
+//     password (name: 'AWS_ACCESS_KEY_ID')
+//     password (name: 'AWS_SECRET_ACCESS_KEY')
+//   }
   environment {
     TF_IN_AUTOMATION = 'true'
-    AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
+//     AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
+//     AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
   }
   stages {
     stage('Terraform Init') {
       steps {
+        sh "echo ${TEST_DUYET}"
         sh "cd eks-with-monitoring"
         sh "${env.TERRAFORM_HOME}/terraform init -input=false"
       }
