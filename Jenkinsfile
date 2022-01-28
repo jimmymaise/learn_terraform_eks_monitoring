@@ -18,6 +18,7 @@ pipeline {
         echo env.AWS_ACCESS_KEY
         echo env.AWS_SECRET_KEY
         sh "cd eks-with-monitoring"
+        sh "ls -lha"
         sh "${env.TERRAFORM_HOME}/terraform init -input=false"
       }
     }
