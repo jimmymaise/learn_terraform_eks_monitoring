@@ -6,7 +6,7 @@ pipeline {
         TERRAFORM_HOME = "/usr/local/bin/"
         TF_IN_AUTOMATION = 'true'
         ENV="dev"
-        PATH="$PATH:~/usr/local/bin/"
+        PATH="$PATH:/usr/local/bin/"
   }
   stages {
 
