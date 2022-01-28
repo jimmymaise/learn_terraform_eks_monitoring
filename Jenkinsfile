@@ -32,8 +32,7 @@ pipeline {
     }
     stage('Terraform Apply') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply terra.plan -auto-approve"
-      }
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -var-file=envs/${ENV}/terraform.tfvars --auto-approve"      }
     }
   }
 }
