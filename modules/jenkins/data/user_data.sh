@@ -99,7 +99,7 @@ sudo mv *.yaml /var/jenkins_home/casc_configs
 #---------------------------------------------#
 #----------> RUN SH CONFIG FILES  <----------#
 #---------------------------------------------#
-
+sudo sleep 10
 ./create_admin_user.sh
 ./download_install_plugins.sh
 sudo sleep 120

@@ -5,7 +5,9 @@ pipeline {
 //     password (name: 'AWS_SECRET_ACCESS_KEY')
 //   }
   environment {
-        TEST_DUYET = credentials('testduyet')
+        AWS_ACCESS_KEY = credentials('JENKINS_AWS_ACCESS_KEY')
+        AWS_SECRET_KEY = credentials('JENKINS_AWS_SECRET_KEY')
+        TERRAFORM_HOME = "/usr/local/bin/"
         TF_IN_AUTOMATION = 'true'
 //     AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
 //     AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
@@ -13,9 +15,8 @@ pipeline {
   stages {
     stage('Terraform Init') {
       steps {
-        echo "here"
-        echo "${env.TEST_DUYET}"
-        echo "here"
+        echo env.AWS_ACCESS_KEY
+        echo env.AWS_SECRET_KEY
         sh "cd eks-with-monitoring"
         sh "${env.TERRAFORM_HOME}/terraform init -input=false"
       }

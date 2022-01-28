@@ -3,6 +3,7 @@
 
 while [ ! -f /var/lib/jenkins/secrets/initialAdminPassword ]
 do
+  echo "Wait for jenkins file /var/lib/jenkins/secrets/initialAdminPassword"
   sleep 2 # or less like 0.2
 done
 old_password=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
