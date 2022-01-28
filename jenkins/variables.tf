@@ -1,3 +1,11 @@
+variable "jenkins_secrets" {
+  default     = {
+    "AWS_ACCESS_KEY" = "this is invalid key"
+    "AWS_SECRET_KEY" = "this is invalid secret"
+  }
+  type = map
+}
+
 variable "aws_region" {
   default = "us-west-2"
   type    = string

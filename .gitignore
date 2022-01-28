@@ -2,3 +2,4 @@ metrics-server-0.3.6
 .terraform
 eks-with-monitoring/secret.tfvars
 pkg
+secret.tfvars

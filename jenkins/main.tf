@@ -1,7 +1,22 @@
+resource "aws_secretsmanager_secret" "jenkins" {
+  count                   = length(var.jenkins_secrets)
+  name                    = "JENKINS_${element(keys(var.jenkins_secrets), count.index)}"
+  recovery_window_in_days = 0
+  tags                    = { "jenkins:credentials:type" : "string" }
+}
+
+
+resource "aws_secretsmanager_secret_version" "jenkins" {
+  count         = length(var.jenkins_secrets)
+  secret_id     = element(aws_secretsmanager_secret.jenkins.*.id, count.index)
+  secret_string = element(values(var.jenkins_secrets), count.index)
+}
+
+
 module "jenkins" {
   source = "../modules/jenkins"
 
-  ami_id                = "ami-066333d9c572b0680" # AMI for an Amazon Linux instance for region: us-east-1
+  ami_id               = "ami-066333d9c572b0680" # AMI for an Amazon Linux instance for region: us-east-1
   iam_instance_profile = aws_iam_instance_profile.jenkins.name
   key_pair             = aws_key_pair.jenkins-key.key_name
   name                 = "jenkins"
