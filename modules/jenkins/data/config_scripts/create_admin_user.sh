@@ -1,5 +1,13 @@
 #! /bin/bash
+
+
+while [ ! -f /var/lib/jenkins/secrets/initialAdminPassword ]
+do
+  sleep 2 # or less like 0.2
+done
 old_password=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+
+
 
 # NEW ADMIN CREDENTIALS URL ENCODED USING PYTHON
 password_URLEncoded=$(python -c "import urllib;print urllib.quote(raw_input(), safe='')" <<< "$password")
