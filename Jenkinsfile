@@ -31,7 +31,7 @@ pipeline {
 //     }
     stage('Terraform Apply') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -var-file=envs/${ENV}/terraform.tfvars -input=false"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -var-file=envs/${ENV}/terraform.tfvars --auto-approve"
       }
     }
   }
