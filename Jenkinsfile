@@ -9,6 +9,7 @@ pipeline {
         AWS_SECRET_KEY = credentials('JENKINS_AWS_SECRET_KEY')
         TERRAFORM_HOME = "/usr/local/bin/"
         TF_IN_AUTOMATION = 'true'
+        ENV="dev"
 //     AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
 //     AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
   }
@@ -19,18 +20,18 @@ pipeline {
         echo env.AWS_SECRET_KEY
         sh "cd eks-with-monitoring"
         sh "ls -lha"
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" init -input=false"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" init -backend-config=envs/${env.ENV}/backend.conf"
       }
     }
-    stage('Terraform Plan') {
-      steps {
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" plan -out=tfplan -input=false -var-file='dev.tfvars'"
-      }
-    }
+//     stage('Terraform Plan') {
+//       steps {
+//
+//         sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" plan -out=tfplan -input=false -var-file='dev.tfvars'"
+//       }
+//     }
     stage('Terraform Apply') {
       steps {
-        input 'Apply Plan'
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -input=false tfplan"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -backend-config=envs/${env.ENV}/backend.conf -input=false"
       }
     }
     stage('AWSpec Tests') {
