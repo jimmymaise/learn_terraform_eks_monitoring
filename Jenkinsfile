@@ -1,19 +1,20 @@
 pipeline {
   agent any
-//   parameters {
-//     password (name: 'AWS_ACCESS_KEY_ID')
-//     password (name: 'AWS_SECRET_ACCESS_KEY')
-//   }
   environment {
         AWS_ACCESS_KEY = credentials('JENKINS_AWS_ACCESS_KEY')
         AWS_SECRET_KEY = credentials('JENKINS_AWS_SECRET_KEY')
         TERRAFORM_HOME = "/usr/local/bin/"
         TF_IN_AUTOMATION = 'true'
         ENV="dev"
-//     AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
-//     AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
   }
   stages {
+
+      stage('Unit test') {
+        steps {
+          sh "go mod download"
+          sh "go test ./terra_test/... -v"
+        }
+      }
     stage('Terraform Init') {
       steps {
         echo env.AWS_ACCESS_KEY
@@ -23,15 +24,14 @@ pipeline {
         sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" init -backend-config=envs/${env.ENV}/backend.conf"
       }
     }
-//     stage('Terraform Plan') {
-//       steps {
-//
-//         sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" plan -out=tfplan -input=false -var-file='dev.tfvars'"
-//       }
-//     }
+    stage('Terraform Plan') {
+      steps {
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" plan -var-file=envs/${ENV}/terraform.tfvars -out=terra.plan"
+      }
+    }
     stage('Terraform Apply') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply -var-file=envs/${ENV}/terraform.tfvars --auto-approve"
+        sh "${env.TERRAFORM_HOME}/terraform -chdir=\"./eks-with-monitoring\" apply terra.plan --auto-approve"
       }
     }
   }
