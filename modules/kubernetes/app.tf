@@ -15,9 +15,11 @@ resource "kubernetes_secret" "mysql-pass" {
     name = "mysql-pass"
   }
   data = {
-    password = "root"
+    password = var.wp_mysql_pass
   }
 }
+
+
 
 
 resource "kubernetes_deployment" "wordpress_web" {
@@ -81,7 +83,7 @@ resource "kubernetes_service" "wordpress_web-service" {
     port {
       port        = 80
       target_port = 80
-      protocol = "TCP"
+      protocol    = "TCP"
     }
     type     = "NodePort"
   }
@@ -91,7 +93,7 @@ resource "kubernetes_service" "wordpress_web-service" {
 resource "kubernetes_ingress" "wordpress" {
   metadata {
     name        = "kube-ingress-wordpress"
-#    namespace = "wordpress_app"
+    #    namespace = "wordpress_app"
     annotations = {
       "kubernetes.io/ingress.class"           = "alb"
       "alb.ingress.kubernetes.io/scheme"      = "internet-facing"

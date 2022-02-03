@@ -1,5 +1,13 @@
+data "aws_secretsmanager_secret_version" "eks_with_monitoring" {
+  # Fill in the name you gave to your secret
+  secret_id = "eks_monitoring_secret"
+}
+
 locals {
-  cluster_name = "testapp-eks-cluster"
+  cluster_name              = "testapp-eks-cluster"
+  eks_with_monitoring_creds = jsondecode(
+  data.aws_secretsmanager_secret_version.eks_with_monitoring.secret_string
+  )
 }
 
 
@@ -67,6 +75,8 @@ module "kubernetes" {
   eks_cluster_endpoint = module.eks.cluster_endpoint
   eks_oidc_url         = module.eks.oidc_url
   eks_ca_certificate   = module.eks.ca_certificate
+  wp_mysql_pass        = local.eks_with_monitoring_creds["wp_sql_password"]
+  grafana_pass         = local.eks_with_monitoring_creds["grafana_password"]
 }
 
 

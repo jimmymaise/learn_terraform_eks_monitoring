@@ -43,7 +43,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "adminPassword"
-    value = "justForTest"
+    value = var.grafana_pass
   }
 
   set {

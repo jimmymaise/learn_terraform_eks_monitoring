@@ -1,9 +1,9 @@
 variable "jenkins_secrets" {
-  default     = {
+  default = {
     "AWS_ACCESS_KEY" = "this is invalid key"
     "AWS_SECRET_KEY" = "this is invalid secret"
   }
-  type = map
+  type    = map
 }
 
 variable "aws_region" {
@@ -21,9 +21,18 @@ variable "admin_username" {
   type    = string
 }
 
+
+variable "eks_monitoring_secret" {
+  default = {
+    "wp_sql_password" : "admin",
+    "grafana_password" : "admin"
+  }
+  sensitive = true
+}
 variable "admin_password" {
-  default = "admin"
-  type    = string
+  default   = "admin"
+  type      = string
+  sensitive = true
 }
 
 variable "admin_fullname" {

@@ -6,6 +6,17 @@ resource "aws_secretsmanager_secret" "jenkins" {
 }
 
 
+resource "aws_secretsmanager_secret" "eks_monitoring_secret" {
+  name                    = "eks_monitoring_secret"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "eks_monitoring_secret" {
+  secret_id     = aws_secretsmanager_secret.eks_monitoring_secret.id
+  secret_string = jsonencode(var.eks_monitoring_secret)
+}
+
+
 resource "aws_secretsmanager_secret_version" "jenkins" {
   count         = length(var.jenkins_secrets)
   secret_id     = element(aws_secretsmanager_secret.jenkins.*.id, count.index)

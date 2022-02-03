@@ -57,8 +57,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 }
 
 data "tls_certificate" "certificate" {
-  //noinspection HILUnresolvedReference
-  url = aws_eks_cluster.eks_cluster.identity[0].oidc[0].issuer
+  url = aws_eks_cluster.eks_cluster.identity[0].oidc[0]["issuer"]
 }
 
 resource "aws_iam_openid_connect_provider" "oidc_provider" {

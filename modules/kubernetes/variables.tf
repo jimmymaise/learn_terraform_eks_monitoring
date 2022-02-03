@@ -2,6 +2,15 @@ variable "vpc_id" {
   description = "The VPC ID"
 }
 
+variable "wp_mysql_pass" {
+  sensitive = true
+}
+
+variable "grafana_pass" {
+  sensitive = true
+}
+
+
 variable "eks_cluster_id" {
   type        = string
   description = "EKS Cluster cluster_id"
