@@ -1,0 +1,17 @@
+unclassified:
+  awsCredentialsProvider:
+    cache: false           # optional
+#    listSecrets: # optional
+#      filters:
+#        - key: name
+#          values:
+#            - (string)
+#        - key: tag-key
+#          values:
+#            - (string)
+#        - key: tag-value
+#          values:
+#            - (string)
+#        - key: description
+#          values:
+#            - (string)  # note: filtering by tags or name is usually a better approach

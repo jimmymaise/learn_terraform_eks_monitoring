@@ -1,3 +1,14 @@
+module "ecr_quote_fe" {
+  for_each    = {
+    ecr_quote_fe_v1 = "ecr_quote_fe_v1"
+    ecr_quote_fe_v2 = "ecr_quote_fe_v2"
+  }
+  ecr_name    = each.key
+  environment = "prod"
+  source      = "../modules/ecr"
+}
+
+
 resource "aws_secretsmanager_secret" "jenkins" {
   count                   = length(var.jenkins_secrets)
   name                    = "JENKINS_${element(keys(var.jenkins_secrets), count.index)}"

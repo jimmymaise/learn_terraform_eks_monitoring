@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+</head>
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<body>
+<h1>{{ subject }} </h1>
+<table>
+    <tr>
+        <th>Quote</th>
+        <th>Author</th>
+    </tr>
+    {% for item in data %}
+        <tr>
+            <td>{{ item.text }}
+            </td>
+            <td>{{ item.author }}</td>
+        </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>

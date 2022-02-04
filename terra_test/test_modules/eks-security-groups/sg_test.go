@@ -4,12 +4,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"terraform-eks-with-monitoring/terra_test/testutils"
 	"testing"
-)
-import (
-	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
 func TestEksClusterSG(t *testing.T) {
