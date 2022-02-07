@@ -3,8 +3,9 @@
 sudo yum update -y
 amazon-linux-extras install epel -y
 
-# Install Git
+# Install Git, jq
 sudo yum install -y git
+sudo yum install jq -y
 
 # Install Jenkins
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
@@ -48,6 +49,8 @@ sudo mv arachni-1.5.1-0.5.12 /var/lib/jenkins/opt
 
 # Save the instance_id, repositories urls and bucket name to use in the pipeline
 sudo /bin/bash -c "echo ${bucket_logs_name} > /var/lib/jenkins/opt/bucket_name"
+curl http://stedolan.github.io/jq/download/linux64/jq -o ~/bin_compciv/jq
+chmod a+x ~/bin_compciv/jq
 
 # Change ownership and group of these files
 sudo chown -R jenkins /var/lib/jenkins/opt/
@@ -120,6 +123,6 @@ echo export CASC_JENKINS_CONFIG="/var/jenkins_home/casc_configs" | sudo tee -a /
 #---------> DELETE THE CONFIG FILES <---------#
 #---------------------------------------------#
 
-sudo rm *.sh credentials_id
+sudo rm *.sh
 
 reboot

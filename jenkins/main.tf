@@ -1,9 +1,9 @@
 module "ecr_quote_fe" {
   for_each    = {
-    ecr_quote_fe_v1 = "ecr_quote_fe_v1"
-    ecr_quote_fe_v2 = "ecr_quote_fe_v2"
+    ecr_quote_fe_v1 = "ecr-quote-fe-v1"
+    ecr_quote_fe_v2 = "ecr-quote-fe-v2"
   }
-  ecr_name    = each.key
+  ecr_name    = each.value
   environment = "prod"
   source      = "../modules/ecr"
 }

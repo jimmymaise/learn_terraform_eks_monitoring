@@ -7,6 +7,11 @@ locals {
     App  = "wordpress"
     Tier = "mysql"
   }
+
+  quote_fe_v1_labels     = {
+    App  = "quote_fe_v1"
+    Tier = "frontend"
+  }
 }
 
 

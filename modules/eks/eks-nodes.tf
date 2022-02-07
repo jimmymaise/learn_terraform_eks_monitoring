@@ -65,11 +65,42 @@ resource "aws_iam_policy" "eks_worknode_ebs_policy" {
 }
 POLICY
 }
+
+
+resource "aws_iam_policy" "eks_worknode-ecr" {
+  name = "Amazon_EBS_CSI_Driver"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetAuthorizationToken"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+POLICY
+}
+
+
 # And attach the new policy
 resource "aws_iam_role_policy_attachment" "worknode-AmazonEBSCSIDriver" {
   policy_arn = aws_iam_policy.eks_worknode_ebs_policy.arn
   role       = aws_iam_role.eks_worknode.name
 }
+
+resource "aws_iam_role_policy_attachment" "eks_worknode-AmazonECR" {
+  policy_arn = aws_iam_policy.eks_worknode_ecr.arn
+  role       = aws_iam_role.eks_worknode.name
+}
+
 
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
@@ -99,6 +130,8 @@ resource "aws_eks_node_group" "eks-worknode-groups" {
     aws_iam_role_policy_attachment.worknode-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.worknode-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.worknode-AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.eks_worknode-AmazonECR,
+
   ]
 }
 
