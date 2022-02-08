@@ -20,10 +20,10 @@ resource "kubernetes_deployment" "quote_fe_v1" {
           }
           resources {
             limits   = {
-              cpu : "2000m"
+              cpu = "2000m"
             }
             requests = {
-              cpu : "1000m"
+              cpu = "1000m"
             }
           }
         }
