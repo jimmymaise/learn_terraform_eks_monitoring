@@ -67,8 +67,8 @@ POLICY
 }
 
 
-resource "aws_iam_policy" "eks_worknode-ecr" {
-  name = "Amazon_EBS_CSI_Driver"
+resource "aws_iam_policy" "eks_worknode_ecr" {
+  name = "EKS_Worker_Node_ECR"
 
   policy = <<POLICY
 {
