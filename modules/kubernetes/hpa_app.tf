@@ -93,3 +93,4 @@ resource "kubernetes_horizontal_pod_autoscaler" "quote_fe_v1_autoscaler" {
     }
   }
 }
+

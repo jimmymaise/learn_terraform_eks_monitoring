@@ -11,9 +11,6 @@ terraform apply -var-file=envs/${ENV}/terraform.tfvars
 
 terraform destroy -var-file=envs/${ENV}/terraform.tfvars
 
-curl -o v0.3.6.tar.gz https://codeload.github.com/kubernetes-sigs/metrics-server/tar.gz/v0.3.6 && tar -xzf v0.3.6.tar.gz
-kubectl apply -f metrics-server-0.3.6/deploy/1.8+/ 
-kubectl get deployment metrics-server -n kube-system
 
 aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
 
@@ -31,7 +28,17 @@ echo "http://$ELB"
 justForTest
 
 
+
+kubectl get hpa
+
 kubectl run -i     --tty load-generator     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
 
 kubectl run -i     --tty load-generator1     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
 kubectl run -i     --tty load-generator2     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+
+kubectl run -i     --tty load-generator3     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+kubectl run -i     --tty load-generator4     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+
+kubectl run -i     --tty load-generator5     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+kubectl run -i     --tty load-generator6     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+

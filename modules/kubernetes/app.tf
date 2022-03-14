@@ -15,6 +15,8 @@ locals {
 }
 
 
+
+
 resource "kubernetes_secret" "mysql-pass" {
   metadata {
     name = "mysql-pass"
