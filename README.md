@@ -1,44 +1,89 @@
-~~3119 6417
+# Learn Terraform EKS Monitoring
 
+This project aims to teach you how to set up an Amazon EKS (Elastic Kubernetes Service) cluster and monitor it using Grafana. The project involves several AWS services such as EKS, S3, and IAM, along with Terraform for infrastructure as code and Kubernetes for container orchestration.
 
-aws s3api create-bucket --bucket dev-eks-monitoring-pet-backend --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+:warning: **Note:** This is a pet project and is not intended for production use. Always follow best practices when deploying infrastructure for production environments.
 
-export ENV="dev"
+## Table of Contents
+- [Technologies](#technologies)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Features](#features)
 
-terraform init -backend-config=envs/${ENV}/backend.conf
+## Technologies
+- AWS EKS
+- AWS S3
+- AWS IAM
+- Terraform
+- Kubernetes
+- Grafana
 
-terraform apply -var-file=envs/${ENV}/terraform.tfvars
+## Getting Started
 
-terraform destroy -var-file=envs/${ENV}/terraform.tfvars
+### Prerequisites
+- AWS CLI installed and configured
+- Terraform installed
+- `kubectl` installed
 
+### Steps to Run
+1. **Create an AWS S3 bucket in the us-west-2 region**
+    ```bash
+    aws s3api create-bucket --bucket dev-eks-monitoring-pet-backend --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+    ```
+  
+2. **Set Environment Variable to `dev`**
+    ```bash
+    export ENV="dev"
+    ```
 
-aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
+3. **Initialize Terraform**
+    ```bash
+    terraform init -backend-config=envs/${ENV}/backend.conf
+    ```
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
-kubectl apply -f ./kubeyaml/dashboard-adminuser.yaml kubectl -n kubernetes-dashboard get secret $(kubectl -n
-kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+4. **Apply Terraform Configuration**
+    ```bash
+    terraform apply -var-file=envs/${ENV}/terraform.tfvars
+    ```
 
-kubectl proxy
+5. **Update `kubeconfig` for EKS Cluster**
+    ```bash
+    aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
+    ```
 
-cloud-nuke aws --exclude-resource-type iam
+6. **Apply Kubernetes Dashboard and Get Admin Token**
+    ```bash
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+    kubectl apply -f ./kubeyaml/dashboard-adminuser.yaml
+    ```
 
-export ELB=$(kubectl get svc -n grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+7. **Start `kubectl` proxy**
+    ```bash
+    kubectl proxy
+    ```
 
-echo "http://$ELB"
-justForTest
+8. **Get Grafana Load Balancer Hostname**
+    ```bash
+    export ELB=$(kubectl get svc -n grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+    echo "http://$ELB"
+    ```
 
+9. **Run Load Generators for Testing**
+    ```bash
+    kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+    ```
 
+## Usage
 
-kubectl get hpa
+After setting up, you can open the Grafana dashboard to monitor the EKS cluster.
 
-kubectl run -i     --tty load-generator     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+## Features
+- Infrastructure as Code (IaC) using Terraform
+- EKS Cluster Management
+- AWS S3 and IAM Configuration
+- Grafana Dashboard Setup
+- Kubernetes Dashboard Configuration
 
-kubectl run -i     --tty load-generator1     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
-kubectl run -i     --tty load-generator2     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
+## License
 
-kubectl run -i     --tty load-generator3     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
-kubectl run -i     --tty load-generator4     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
-
-kubectl run -i     --tty load-generator5     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
-kubectl run -i     --tty load-generator6     --rm --image=busybox     --restart=Never     -- /bin/sh -c "while sleep 0.001; do wget -q -O- http://quote-fe-v1; done"
-
+MIT
