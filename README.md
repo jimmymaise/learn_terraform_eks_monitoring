@@ -1,6 +1,6 @@
 # Learn Terraform EKS Monitoring
 
-This project aims to desmontrate how to set up an Amazon EKS (Elastic Kubernetes Service) cluster and monitor it using Grafana. The project involves several AWS services such as EKS, S3, and IAM, along with Terraform for infrastructure as code and Kubernetes for container orchestration.
+This project aims to demonstrate how to set up an Amazon EKS (Elastic Kubernetes Service) cluster, automate deployment processes through Jenkins, and monitor it using Grafana. The project involves several AWS services such as EKS, S3, and IAM, along with Terraform for infrastructure as code, Jenkins for CI/CD (Continuous Integration/Continuous Deployment), and Kubernetes for container orchestration.
 
 :warning: **Note:** This is a pet project and is not intended for production use. Always follow best practices when deploying infrastructure for production environments.
 
